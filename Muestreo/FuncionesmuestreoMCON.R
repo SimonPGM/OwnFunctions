@@ -2,14 +2,14 @@
 
 
 #Conglomerados tamaños distintos MAS y Razon
-tau_muc_mu <- function(Mi, taui, N, n) {
+tau_muc_mu <- function(Mi, taui, N, Mo) {
   
-  #Mi tamaño de los conglomerados
-  #Taui totales de los conglomerados
+  #Mi tamaño de los conglomerados (seleccionados en la muestra)
+  #taui totales de los conglomerados (seleccionados en la muestra)
   #N total de conglomerados
-  #n número de coglomerados seleccionados en la muestra
+  #Mo es el total de unidades muestrales en la poblacion
   
-  Mo <- sum(Mi)
+  n <- length(Mi)
   tauc.hat <- (N/n)*sum(taui)
   muc.hat <- tauc.hat/N
   M.bar <- Mo/N
@@ -32,16 +32,17 @@ tau_muc_mu <- function(Mi, taui, N, n) {
   return(result)
 }
 
-tau_muc_mu_r <- function(Mi, taui, N, n) {
+tau_muc_mu_r <- function(Mi, taui, N, Mo) {
   
   #Mi tamaño de los conglomerados
   #Taui totales de los conglomerados
   #N total de conglomerados
   #n número de coglomerados seleccionados en la muestra
+  #Mo es el total de unidades muestrales en la poblacion
   
-  Mo <- sum(Mi)
+  n <- length(Mi)
   M.bar <- Mo/N
-  mu.hat <- sum(taui)/Mo
+  mu.hat <- sum(taui)/sum(Mi)
   tau.hat <- Mo*mu.hat
   M.bar <- Mo/N
   temp <- (taui - Mi*mu.hat)^2
