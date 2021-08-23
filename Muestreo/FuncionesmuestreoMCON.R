@@ -121,5 +121,5 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0 = NULL){
   intervalos <- data.frame(LI = c(p_con - 2*sqrt(varp_con), A_con - 2*sqrt(varA_con)),
                            LS = c(p_cont + 2*sqrt(varp_con), A_con + 2*sqrt(varA_con)))
   rownames(intervalos) <- c("P_con", "A_con")
-  ist(Estimaciones = data.frame(P_con = p_con, A_con = A_con), Intervalos = intervalos)
+  list(Estimaciones = data.frame(P_con = p_con, A_con = A_con), Intervalos = intervalos)
 }
