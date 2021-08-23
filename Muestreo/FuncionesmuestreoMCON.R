@@ -50,6 +50,124 @@ mu_tau_con <- function(tau_i, M, N, n, approx = T, alpha = NULL){
 }
 
 #Conglomerados tamaños distintos MAS y Razon
+tau_muc_mu <- function(Mi, taui, N, Mo) {
+  
+  #Mi tamaño de los conglomerados (seleccionados en la muestra)
+  #taui totales de los conglomerados (seleccionados en la muestra)
+  #N total de conglomerados
+  #Mo es el total de unidades muestrales en la poblacion
+  
+  n <- length(Mi)
+  tauc.hat <- (N/n)*sum(taui)
+  muc.hat <- tauc.hat/N
+  M.bar <- Mo/N
+  mu.hat <- muc.hat/M.bar
+  temp <- (taui-muc.hat)^2
+  vartauc.hat <- N^2*(1-n/N)*sum(temp)/(n*(n-1))
+  varmuc.hat <- vartauc.hat/N^2
+  varmu.hat <- vartauc.hat/Mo^2
+  Btauc.hat <- 2*sqrt(vartauc.hat)
+  Bmuc.hat <- 2*sqrt(varmuc.hat)
+  Bmu.hat <- 2*sqrt(varmu.hat)
+  Litauc <- tauc.hat - Btauc.hat; Lstauc <- tauc.hat + Btauc.hat
+  Limuc <- muc.hat - Bmuc.hat; Lsmuc <- muc.hat + Bmuc.hat
+  Limu <- mu.hat - Bmu.hat; Lsmu <- mu.hat + Bmu.hat
+  result <- data.frame(Estimation = c(tauc.hat, muc.hat, mu.hat),
+                       B = c(Btauc.hat, Bmuc.hat, Bmu.hat),
+                       LI = c(Litauc, Limuc, Limu),
+                       LS = c(Lstauc, Lsmuc, Lsmu))
+  colnames(result) <- c("Tau", "Mu_c", "Mu")
+  return(result)
+}
 
+tau_muc_mu_r <- function(Mi, taui, N, Mo) {
+  
+  #Mi tamaño de los conglomerados
+  #Taui totales de los conglomerados
+  #N total de conglomerados
+  #n número de coglomerados seleccionados en la muestra
+  #Mo es el total de unidades muestrales en la poblacion
+  
+  n <- length(Mi)
+  M.bar <- Mo/N
+  mu.hat <- sum(taui)/sum(Mi)
+  tau.hat <- Mo*mu.hat
+  M.bar <- Mo/N
+  temp <- (taui - Mi*mu.hat)^2
+  varmu.hat <- (1/M.bar^2)*(1-n/N)*sum(temp)/(n*(n-1))
+  vartau.hat <- Mo^2*varmu.hat
+  Bmu.hat <- 2*sqrt(varmu.hat)
+  Btau.hat <- 2*sqrt(vartau.hat)
+  Limu <- mu.hat - Bmu.hat; Lsmu <- mu.hat + Bmu.hat
+  Litau <- tau.hat - Btau.hat; Lstau <- tau.hat + Btau.hat
+  result <- data.frame(Estimation = c(tau.hat, mu.hat),
+                       B = c(Btau.hat, Bmu.hat),
+                       LI = c(Litau, Limu),
+                       LS = c(Lstau, Lsmu))
+  colnames(result) <- c("Tau", "Mu")
+  return(result)
+}
+
+sample_size <- function(N, sigma2, D) {
+  
+  #N es la cantidad de conglomerados
+  #sigma2 es la estimacion de la varianza
+  #D es B^2Mbar^2/4
+  
+  n <- N*sigma2/(N*D + sigma2)
+  result <- data.frame(nreal = n, ninteger = ceiling(n))
+  colnames(result) <- c("ns")
+  return(result)
+}
 
 #Conglomerados tamaños distintos PPT, propociones y totales
+
+Estimacionesppt <- function(M_i, t_i, n, N, M_0 = NULL){
+  #t_i total por conglomerado
+  #N total de conglomerados
+  #n número de conglomerados en la muestra
+  #M_i Tamaño del iésimo conglomerado
+  if (is.null(M_0)){
+    M_0 <- sum(M_i)
+  }
+  p_i <- M_i/M_0 
+  t_pi <- t_i/p_i 
+  mu_i <- t_i/M_i 
+  t_ppt <- M_0/n*sum(mu_i) 
+  mu_ppt <- t_ppt/M_0  
+  vart_ppt <- M_0^2/n*sum((mu_i-mu_ppt)^2/(n-1)) 
+  varmu_ppt <- 1/n*sum((mu_i-mu_ppt)^2/(n-1)) 
+  intervalos <- data.frame(LI = c(t_ppt - 2*sqrt(vart_ppt), mu_ppt - 2*sqrt(varmu_ppt)),
+                           LS = c(t_ppt + 2*sqrt(vart_ppt), mu_ppt + 2*sqrt(varmu_ppt)))
+  rownames(intervalos) <- c("T_ppt", "Mu_ppt")
+  list(Estimaciones = data.frame(T_ppt = t_ppt, Mu_ppt = mu_ppt),
+       Mu_i = mu_i, Intervalos = intervalos)
+}
+
+samplesizeppt <- function(B, N, n = NULL, mu_i = NULL, mu_ppt = NULL, est = NULL, aprox = T, alpha = NULL){
+  #B Límite de error para la estimación
+  #N Total de conglomerados 
+  #El resto de parámetros se usan si se proporcionan, de lo contrario debe dar el parámetro "est"
+  z <- ifelse(aprox, 2, qnorm(1-alpha/2))
+  n <- ifelse(is.null(n), (z/B)^2*est, (z/B)^2*sum((mu_i-mu_ppt)^2/(n-1)))
+  data.frame(napprox = n, n = ceiling(n))
+}
+
+EstimacionesPA <- function(A_i, M_i, N, n, M_0 = NULL){
+  #A_i Nro de elementos de interés en el i-ésimo conglomerado
+  #M_i Tamaño del i-ésimo conglomerado
+  #N Total de conglomerados
+  #n número de conglomerados en la muestra 
+  if (is.null(M_0)){
+    M_0 <- sum(M_i)
+  }
+  p_con <- sum(Ai)/sum(Mi)
+  Mbar <- 1/N*sum(M_i)
+  varp_con <- (N-n)/(N*n*Mbar^2)*sum((A_i-p_con*sum(M_i))^2)/(n-1)
+  A_con <- M_0*p_con
+  varA_con <- M_0^2*varp_con
+  intervalos <- data.frame(LI = c(p_con - 2*sqrt(varp_con), A_con - 2*sqrt(varA_con)),
+                           LS = c(p_cont + 2*sqrt(varp_con), A_con + 2*sqrt(varA_con)))
+  rownames(intervalos) <- c("P_con", "A_con")
+  list(Estimaciones = data.frame(P_con = p_con, A_con = A_con), Intervalos = intervalos)
+}
