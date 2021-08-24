@@ -63,6 +63,49 @@ con_equals_sample_size <- function(N, S2, D){
   return(overall)
 }
 
+
+prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL, approx = T, alpha = NULL){
+  if(is.null(Pi)){
+    Pi <- Ai/M
+  }
+  #Estimacion pnutual
+  p_con <- 1/n * sum(Pi)
+  A_con <- N*p_con
+  
+  #Varianzas estimadas
+  var_p_con <- (1 - n/N) * (1/n) * (1/(n - 1)) * sum((Pi - p_con)^2)
+  var_A_con <- N^2 * var_p_con
+  
+  #Errores estandars
+  if(approx) {
+    B_p <- 2 * sqrt(var_p_con)
+    B_A <- 2 * sqrt(var_A_con)
+  }
+  else{
+    B_p <- qnorm(alpha/2, lower.tail = F) * sqrt(var_p_con)
+    B_A <- qnorm(alpha/2, lower.tail = F) * sqrt(var_A_con)
+  }
+  
+  #Limites de error de estimacion
+  LEE <- data.frame(B_p = B_p, B_A = B_A)
+  
+  #Intervalos de confianza
+  IC_p <- c(p_con - B_p, p_con + B_p)
+  #Para el total, el limite inferior se redondea por debajo
+  #y el superior por encima (piso y techo respectivamente)
+  IC_A <- c(floor(A_con - B_A), ceiling(A_con + B_A))
+  aux <- rbind(IC_p, IC_A)
+  IC <- data.frame(lower = aux[, 1],
+                   upper = aux[, 2])
+  rownames(IC) <- c("Prop", "Tot")
+  
+  #Resumen
+  overall <- list(p_con = p_con, A_con = A_con,
+                  LEE = LEE,
+                  ICs = IC)
+  return(overall)
+}
+
 #Conglomerados tamaños distintos MAS y Razon
 tau_muc_mu <- function(Mi, taui, N, Mo) {
   
