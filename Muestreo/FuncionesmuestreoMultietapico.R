@@ -14,8 +14,6 @@ first <- function(clusters, Mi) {
   return(list(mi = m, taui = tau, mui = mu, Si2 = S))
 }
 
-Tau
-
 tau_mu_2 <- function(taui, Si2, Mi, mi, N) {
   n <- length(taui)
   Mo <- sum(Mi)
