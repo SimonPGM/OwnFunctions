@@ -49,6 +49,20 @@ mu_tau_con <- function(tau_i, M, N, n, approx = T, alpha = NULL){
   return(overall)
 }
 
+
+con_equals_sample_size <- function(N, S2, D){
+  #Recordar que el D varia dependiendo si el tamaño de muestra
+  #es para mu o tau
+  #mu: D = (B*M/Z)^2
+  #tau: D = (B/(N*Z))^2
+  num <- N*S2
+  den <- N*D + S2
+  n <- num/den
+  overall <- data.frame(n_exacto = n, 
+                        n_aproximado = ceiling(n))
+  return(overall)
+}
+
 #Conglomerados tamaños distintos MAS y Razon
 tau_muc_mu <- function(Mi, taui, N, Mo) {
   
