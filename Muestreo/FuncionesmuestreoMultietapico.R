@@ -127,3 +127,31 @@ EstPoliReem <- function(Mi, n, M0, ti = NULL,  yibar = NULL){
 }
 
 #Conglomerados igual tamaño y tamaño de muestra
+biphase_equal_size_mu <- function(yi_bar, Si2, N, n, m){
+  #Estimacion puntual
+  mu2 <- 1/n * sum(yi_bar)
+  
+  #Varianza
+  #Si2 son varianzas 
+  #mu2 = mu_hat
+  MSB <- m/(n - 1) * sum((yi_bar - mu2)^2)
+  MSW <- 1/n * sum(Si2)
+  var_mu2 <- (1 - n/N) * MSB/(n*m) + (1 - m/M) * 1/N * MSW/m
+  
+  #Error estandar
+  ee_mu2 <- sqrt(var_mu2)
+  
+  #Limite de error de estimacion
+  B_mu2 <- 2 * ee_mu2
+  
+  #IC
+  IC <- c(mu2 - B_mu2, mu2 + B_mu2)
+  
+  overall <- list(mu_2_hat = mu_2,
+                  Variance = var_mu2,
+                  Standard_Error = ee_mu2,
+                  LEE_B = B_mu2,
+                  IC = IC)
+  return(overall)
+}
+
