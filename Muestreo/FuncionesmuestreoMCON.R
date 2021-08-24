@@ -64,29 +64,29 @@ con_equals_sample_size <- function(N, S2, D){
 }
 
 
-prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL, approx = T, alpha = NULL){
+prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL){
+  #Si Pi es nulo, Ai NO puede ser nulo y viceversa
+  #Solo es necesario ingresar alguna de las dos (Pi o Ai)
   if(is.null(Pi)){
     Pi <- Ai/M
   }
-  #Estimacion pnutual
+  #Estimacion puntual
   p_con <- 1/n * sum(Pi)
   A_con <- N*p_con
   
   #Varianzas estimadas
   var_p_con <- (1 - n/N) * (1/n) * (1/(n - 1)) * sum((Pi - p_con)^2)
   var_A_con <- N^2 * var_p_con
+  varianzas <- data.frame(var_p_con = var_p_con,
+                          var_A_con = var_A_con)
   
   #Errores estandars
-  if(approx) {
-    B_p <- 2 * sqrt(var_p_con)
-    B_A <- 2 * sqrt(var_A_con)
-  }
-  else{
-    B_p <- qnorm(alpha/2, lower.tail = F) * sqrt(var_p_con)
-    B_A <- qnorm(alpha/2, lower.tail = F) * sqrt(var_A_con)
-  }
+  EE <- data.frame(ee_B_p = sqrt(var_p_con),
+                   ee_B_A = sqrt(var_A_con))
   
   #Limites de error de estimacion
+  B_p <- 2 * sqrt(var_p_con)
+  B_A <- 2 * sqrt(var_A_con)
   LEE <- data.frame(B_p = B_p, B_A = B_A)
   
   #Intervalos de confianza
@@ -101,6 +101,8 @@ prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL, approx = T, alpha = NULL
   
   #Resumen
   overall <- list(p_con = p_con, A_con = A_con,
+                  Variance = varianzas,
+                  Standard_Error = EE,
                   LEE = LEE,
                   ICs = IC)
   return(overall)
