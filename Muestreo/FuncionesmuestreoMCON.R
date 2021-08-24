@@ -1,5 +1,5 @@
 #Conglomerados con tamaños iguales
-mu_tau_con <- function(tau_i, M, N, n, approx = T, alpha = NULL){
+mu_tau_con <- function(tau_i, M, N, n){
   #El tau_i, M y n se sacan de la BD
   #Si approx es FALSE de be especificar el nivel de confianza
   #Estimaciones puntuales
@@ -14,20 +14,18 @@ mu_tau_con <- function(tau_i, M, N, n, approx = T, alpha = NULL){
   var_mu_c_hat <- (1 - n/N) * (S2_con/n) 
   var_mu_hat <- (1/M^2) * var_mu_c_hat
   var_tau_hat <- N^2 * var_mu_c_hat
-  
-  #Errores estandars
-  if(approx){
-    B_mu_c <- 2 * sqrt(var_mu_c_hat)
-    B_mu_hat <- 2 * sqrt(var_mu_hat)
-    B_tau_hat <- 2 * sqrt(var_tau_hat)
-  }
-  else{
-    B_mu_c <- qnorm(alpha/2, lower.tail = F) * sqrt(var_mu_c_hat)
-    B_mu_hat <- qnorm(alpha/2, lower.tail = F) * sqrt(var_mu_hat)
-    B_tau_hat <- qnorm(alpha/2, lower.tail = F) * sqrt(var_tau_hat)
-  }
+  Variances <- data.frame(var_mu_c_hat = var_mu_c_hat,
+                          var_mu_hat = var_mu_hat,
+                          var_tau_hat = var_tau_hat)
+  #Errores estandar
+  EE <- data.frame(ee_mu_c_hat = sqrt(mu_c_hat),
+                   ee_mu_hat = sqrt(var_mu_hat),
+                   ee_tau_hat = sqrt(var_tau_hat))
   
   #Limites de error de estimacion
+  B_mu_c <- 2 * sqrt(var_mu_c_hat)
+  B_mu_hat <- 2 * sqrt(var_mu_hat)
+  B_tau_hat <- 2 * sqrt(var_tau_hat)
   LEE <- data.frame(B_mu_c = B_mu_c,
                     B_mu_hat = B_mu_hat,
                     B_tau_hat = B_tau_hat)
@@ -44,6 +42,8 @@ mu_tau_con <- function(tau_i, M, N, n, approx = T, alpha = NULL){
   overall <- list(mu_c_hat = mu_c_hat, 
                   mu_hat = mu_hat,
                   tau_hat = tau_hat,
+                  Variance = Variances,
+                  Standard_Error = EE, 
                   LEE = LEE,
                   ICs = IC)
   return(overall)
