@@ -155,3 +155,29 @@ biphase_equal_size_mu <- function(yi_bar, Si2, N, n, m){
   return(overall)
 }
 
+
+sample_size_biphase_equal <- function(yi_bar, Si2, n_pilot, m_pilot, 
+                                      ci, c = NULL, var_mu2 = NULL){
+  #Se necesita valores inciales de n, m Si2 de una muestra piloto
+  mu2 <- 1/n_pilot * sum(yi_bar)
+  MSB <- m_pilot/(n_pilot - 1) * sum((yi_bar - mu2)^2)
+  MSW <- 1/n_pilot * sum(Si2) #Recordar que MSW estima a sigma2w_hat
+  sigma2b_hat <- 1/m_pilot *(MSB - MSW)
+  f1 <- MSW/sigma2b_hat
+  f2 <- ci[1]/ci[2]
+  m <- sqrt(f1 * f2)
+  if(!is.null(c)){
+    n <- c/(ci[1] + round(m) * ci[2])
+  }
+  else{
+    n <- 1/var_mu2 * (sigma2b_hat + MSW/m)
+  }
+  overall <- data.frame(actual = c(m, n),
+                        approx = round(c(m, n)))
+  rownames(overall) <- c("n", "m")
+  return(overall)
+}
+
+
+
+
