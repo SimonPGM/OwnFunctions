@@ -66,12 +66,11 @@ EstRazMu <- function(Mi, M0, N, n, mi, si2,  ti = NULL, yibar = NULL){
        Intervalo = intervalo, S2_rUPM = s2_rupm)
 }
 
-EstRazProp <- function(Mi, M0, N, n, mi){
+EstRazProp <- function(Mi, M0, N, n, mi, pi){
   #Mi Tamaños de los conglomerados
   #N Número total de conglomerados
   #n Número de conglomerados en la muestra
   #mi Tamaño de muestra en el i-ésimo conglomerado
-  pi <- Mi/M0
   Mbar <- M0/N
   p_r2 <- sum(Mi*pi)/sum(Mi)
   s2_rupm <- sum(Mi^2*(pi-p_r2)^2/(n-1))
@@ -121,8 +120,9 @@ EstPoliReem <- function(Mi, n, M0, ti = NULL,  yibar = NULL){
     t_p <- M0/n*sum(ti/Mi)
     vart_p <- 1/(n*(n-1))*sum((ti/pi-t_p)^2)
   }
+  else{
   t_p <- M0/n*sum(yibar) 
-  vart_p <- 1/(n*(n-1))*sum(((Mi*yibar)/pi-t_p)^2)
+  vart_p <- 1/(n*(n-1))*sum(((Mi*yibar)/pi-t_p)^2)}
   data.frame(T_p = t_p, Var = vart_p)
 }
 
