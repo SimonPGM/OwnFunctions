@@ -135,8 +135,9 @@ tau_muc_mu <- function(Mi, taui, N, Mo) {
                        B = c(Btauc.hat, Bmuc.hat, Bmu.hat),
                        LI = c(Litauc, Limuc, Limu),
                        LS = c(Lstauc, Lsmuc, Lsmu))
-  colnames(result) <- c("Tau", "Mu_c", "Mu")
-  return(result)
+  rownames(result) <- c("Tau", "Mu_c", "Mu")
+  S2con <- sum(temp)/(n-1)
+  return(list(result = result, S2con = S2con))
 }
 
 tau_muc_mu_r <- function(Mi, taui, N, Mo) {
@@ -163,8 +164,9 @@ tau_muc_mu_r <- function(Mi, taui, N, Mo) {
                        B = c(Btau.hat, Bmu.hat),
                        LI = c(Litau, Limu),
                        LS = c(Lstau, Lsmu))
-  colnames(result) <- c("Tau", "Mu")
-  return(result)
+  rownames(result) <- c("Tau", "Mu")
+  S2rcon <- sum(temp)/(n-1)
+  return(list(result = result, S2rcon = S2rcon))
 }
 
 sample_size <- function(N, sigma2, D) {
@@ -175,7 +177,7 @@ sample_size <- function(N, sigma2, D) {
   
   n <- N*sigma2/(N*D + sigma2)
   result <- data.frame(nreal = n, ninteger = ceiling(n))
-  colnames(result) <- c("ns")
+  rownames(result) <- c("ns")
   return(result)
 }
 
