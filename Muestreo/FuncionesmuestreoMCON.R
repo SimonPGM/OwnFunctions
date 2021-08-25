@@ -18,7 +18,7 @@ mu_tau_con <- function(tau_i, M, N, n){
                           var_mu_hat = var_mu_hat,
                           var_tau_hat = var_tau_hat)
   #Errores estandar
-  EE <- data.frame(ee_mu_c_hat = sqrt(mu_c_hat),
+  EE <- data.frame(ee_mu_c_hat = sqrt(var_mu_c_hat),
                    ee_mu_hat = sqrt(var_mu_hat),
                    ee_tau_hat = sqrt(var_tau_hat))
   
