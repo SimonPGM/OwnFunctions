@@ -174,7 +174,7 @@ sample_size_biphase_equal <- function(yi_bar, Si2, n_pilot, m_pilot,
   }
   overall <- data.frame(actual = c(m, n),
                         approx = round(c(m, n)))
-  rownames(overall) <- c("n", "m")
+  rownames(overall) <- c("m", "n")
   return(overall)
 }
 
