@@ -14,9 +14,8 @@ first <- function(clusters, Mi) {
   return(list(mi = m, taui = tau, mui = mu, Si2 = S))
 }
 
-tau_mu_2 <- function(taui, Si2, Mi, mi, N) {
+tau_mu_2 <- function(taui, Si2, Mi, mi, N, Mo) {
   n <- length(taui)
-  Mo <- sum(Mi)
   tau2 <- (N/n)*sum(taui)
   mu2 <- tau2/Mo
   taubar <- mean(taui)
@@ -29,12 +28,9 @@ tau_mu_2 <- function(taui, Si2, Mi, mi, N) {
   Limu2 <- mu2 - Bmu2; Lsmu2 <- mu2 + Bmu2
   result <- data.frame(estimations = c(tau2, mu2), B = c(Btau2, Bmu2),
                        Li = c(Litau2, Limu2), Ls = c(Lstau2, Lsmu2))
+  rownames(result) <- c("tau(2)", "mu(2)")
   return(result)
 }
-
-
-
-
 
 #Estimadores de razón
 
