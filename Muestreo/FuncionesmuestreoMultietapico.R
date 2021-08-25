@@ -14,9 +14,8 @@ first <- function(clusters, Mi) {
   return(list(mi = m, taui = tau, mui = mu, Si2 = S))
 }
 
-tau_mu_2 <- function(taui, Si2, Mi, mi, N) {
+tau_mu_2 <- function(taui, Si2, Mi, mi, N, Mo) {
   n <- length(taui)
-  Mo <- sum(Mi)
   tau2 <- (N/n)*sum(taui)
   mu2 <- tau2/Mo
   taubar <- mean(taui)
@@ -29,12 +28,9 @@ tau_mu_2 <- function(taui, Si2, Mi, mi, N) {
   Limu2 <- mu2 - Bmu2; Lsmu2 <- mu2 + Bmu2
   result <- data.frame(estimations = c(tau2, mu2), B = c(Btau2, Bmu2),
                        Li = c(Litau2, Limu2), Ls = c(Lstau2, Lsmu2))
+  rownames(result) <- c("tau(2)", "mu(2)")
   return(result)
 }
-
-
-
-
 
 #Estimadores de razón
 
@@ -66,12 +62,11 @@ EstRazMu <- function(Mi, M0, N, n, mi, si2,  ti = NULL, yibar = NULL){
        Intervalo = intervalo, S2_rUPM = s2_rupm)
 }
 
-EstRazProp <- function(Mi, M0, N, n, mi){
+EstRazProp <- function(Mi, M0, N, n, mi, pi){
   #Mi Tamaños de los conglomerados
   #N Número total de conglomerados
   #n Número de conglomerados en la muestra
   #mi Tamaño de muestra en el i-ésimo conglomerado
-  pi <- Mi/M0
   Mbar <- M0/N
   p_r2 <- sum(Mi*pi)/sum(Mi)
   s2_rupm <- sum(Mi^2*(pi-p_r2)^2/(n-1))
@@ -121,8 +116,9 @@ EstPoliReem <- function(Mi, n, M0, ti = NULL,  yibar = NULL){
     t_p <- M0/n*sum(ti/Mi)
     vart_p <- 1/(n*(n-1))*sum((ti/pi-t_p)^2)
   }
+  else{
   t_p <- M0/n*sum(yibar) 
-  vart_p <- 1/(n*(n-1))*sum(((Mi*yibar)/pi-t_p)^2)
+  vart_p <- 1/(n*(n-1))*sum(((Mi*yibar)/pi-t_p)^2)}
   data.frame(T_p = t_p, Var = vart_p)
 }
 
