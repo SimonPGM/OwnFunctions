@@ -219,8 +219,8 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0){
   #M_i Tamaño del i-ésimo conglomerado
   #N Total de conglomerados
   #n número de conglomerados en la muestra 
-  p_con <- sum(Ai)/M_0
-  Mbar <- sum(M_i)/n
+  p_con <- sum(A_i)/M_0 #Lineas a
+  Mbar <- sum(M_i)/N    #discucion
   varp_con <- (N-n)/(N*n*Mbar^2)*sum((A_i-p_con*M_i)^2)/(n-1)
   A_con <- M_0*p_con
   varA_con <- M_0^2*varp_con
