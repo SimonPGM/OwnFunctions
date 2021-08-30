@@ -123,7 +123,7 @@ EstPoliReem <- function(Mi, n, M0, ti = NULL,  yibar = NULL){
 }
 
 #Conglomerados igual tamaño y tamaño de muestra
-biphase_equal_size_mu <- function(yi_bar, Si2, N, n, m){
+biphase_equal_size_mu <- function(yi_bar, Si2, N, n, M, m){
   #Estimacion puntual
   mu2 <- 1/n * sum(yi_bar)
   
