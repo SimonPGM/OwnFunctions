@@ -34,13 +34,16 @@ tau_mu_2 <- function(taui, Si2, Mi, mi, N, Mo) {
 
 #Estimadores de razón
 
-EstRazMu <- function(Mi, M0, N, n, mi, si2,  ti = NULL, yibar = NULL){
+EstRazMu <- function(Mi, N, n, mi, si2,  ti = NULL, yibar = NULL, M0 = NULL){
   #Mi Tamaños de los conglomerados
   #N Número total de conglomerados
   #n Número de conglomerados en la muestra
   #mi Tamaño de muestra en el i-ésimo conglomerado
   #si2 <- Varianza dentro de los conglomerados
   #Deben dar ti o yibar (totales o medias por conglomerado) 
+  if (is.null(M0)) {
+    M0 <- N*mean(Mi)
+  }
   Mbar <- M0/N
   if (is.null(ti)){
     Mu_r2 <- sum(Mi*yibar)/sum(Mi)
@@ -62,11 +65,14 @@ EstRazMu <- function(Mi, M0, N, n, mi, si2,  ti = NULL, yibar = NULL){
        Intervalo = intervalo, S2_rUPM = s2_rupm)
 }
 
-EstRazProp <- function(Mi, M0, N, n, mi, pi){
+EstRazProp <- function(Mi, N, n, mi, pi, M0 = NULL){
   #Mi Tamaños de los conglomerados
   #N Número total de conglomerados
   #n Número de conglomerados en la muestra
   #mi Tamaño de muestra en el i-ésimo conglomerado
+  if (is.null(M0)) {
+    M0 <- N*mean(Mi)
+  }
   Mbar <- M0/N
   p_r2 <- sum(Mi*pi)/sum(Mi)
   s2_rupm <- sum(Mi^2*(pi-p_r2)^2/(n-1))
@@ -80,7 +86,6 @@ EstRazProp <- function(Mi, M0, N, n, mi, pi){
        Varianzas = data.frame(varP_r2 = varp_r2, varA_r2 = varA_r2), 
        LEEs = data.frame(LEEP_r2 = LEE[1], LEEA = LEE[2]), 
        Intervalo = intervalo, S2_rUPM = s2_rupm)
-  
 }
 
 #PPT
