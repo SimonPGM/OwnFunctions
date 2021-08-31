@@ -109,7 +109,7 @@ prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL){
 }
 
 #Conglomerados tamaños distintos MAS y Razon
-tau_muc_mu <- function(Mi, taui, N) {
+tau_muc_mu <- function(Mi, taui, N, Mo) {
   
   #Mi tamaño de los conglomerados (seleccionados en la muestra)
   #taui totales de los conglomerados (seleccionados en la muestra)
