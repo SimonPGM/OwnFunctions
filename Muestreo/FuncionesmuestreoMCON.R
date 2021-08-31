@@ -109,13 +109,15 @@ prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL){
 }
 
 #Conglomerados tamaños distintos MAS y Razon
-tau_muc_mu <- function(Mi, taui, N, Mo) {
+tau_muc_mu <- function(Mi, taui, N, Mo = NULL) {
   
   #Mi tamaño de los conglomerados (seleccionados en la muestra)
   #taui totales de los conglomerados (seleccionados en la muestra)
   #N total de conglomerados
   #Mo es el total de unidades muestrales en la poblacion
-  
+  if (is.null(Mo)) {
+    Mo <- N*mean(Mi)
+  }
   n <- length(Mi)
   tauc.hat <- (N/n)*sum(taui)
   muc.hat <- tauc.hat/N
@@ -140,14 +142,16 @@ tau_muc_mu <- function(Mi, taui, N, Mo) {
   return(list(result = result, S2con = S2con))
 }
 
-tau_muc_mu_r <- function(Mi, taui, N, Mo) {
+tau_muc_mu_r <- function(Mi, taui, N, Mo = NULL) {
   
   #Mi tamaño de los conglomerados
   #Taui totales de los conglomerados
   #N total de conglomerados
   #n número de coglomerados seleccionados en la muestra
   #Mo es el total de unidades muestrales en la poblacion
-  
+  if (is.null(Mo)) {
+    Mo <- N*mean(Mi)
+  }
   n <- length(Mi)
   M.bar <- Mo/N
   mu.hat <- sum(taui)/sum(Mi)
@@ -183,11 +187,14 @@ sample_size <- function(N, sigma2, D) {
 
 #Conglomerados tamaños distintos PPT, propociones y totales
 
-Estimacionesppt <- function(M_i, t_i, n, N, M_0 ){
+Estimacionesppt <- function(M_i, t_i, n, N, M_0 = NULL){
   #t_i total por conglomerado
   #N total de conglomerados
   #n número de conglomerados en la muestra
   #M_i Tamaño del iésimo conglomerado
+  if (is.null(M_O)) {
+    M_O <- N*mean(Mi)
+  }
   p_i <- M_i/M_0 
   t_pi <- t_i/p_i 
   mu_i <- t_i/M_i 
@@ -219,7 +226,7 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0){
   #M_i Tamaño del i-ésimo conglomerado
   #N Total de conglomerados
   #n número de conglomerados en la muestra 
-  p_con <- sum(Ai)/M_0
+  p_con <- sum(A_i)/sum(M_i)
   Mbar <- sum(M_i)/n
   varp_con <- (N-n)/(N*n*Mbar^2)*sum((A_i-p_con*M_i)^2)/(n-1)
   A_con <- M_0*p_con
@@ -227,7 +234,7 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0){
   varianzas <- data.frame(P_con = varp_con, A_con = varA_con)
   LEEs <- data.frame(P_con = 2*sqrt(varp_con), A_con = 2*sqrt(varA_con))
   intervalos <- data.frame(LI = c(p_con - 2*sqrt(varp_con), A_con - 2*sqrt(varA_con)),
-                           LS = c(p_cont + 2*sqrt(varp_con), A_con + 2*sqrt(varA_con)))
+                           LS = c(p_con + 2*sqrt(varp_con), A_con + 2*sqrt(varA_con)))
   rownames(intervalos) <- c("P_con", "A_con")
   list(Estimaciones = data.frame(P_con = p_con, A_con = A_con), Varianzas = varianzas,
        LEEs = LEEs, Intervalos = intervalos)
