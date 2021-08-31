@@ -231,7 +231,7 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0 = NULL){
   }
   p_con <- sum(A_i)/sum(M_i)
   Mbar <- sum(M_i)/n
-  varp_con <- (N-n)/(N*n*Mbar^2)*sum((A_i-p_con*M_i)^2)/(n-1)
+  varp_con <- (N-n)/(N*n*Mbar^2)*(S2pcon <- sum((A_i-p_con*M_i)^2)/(n-1))
   A_con <- M_0*p_con
   varA_con <- M_0^2*varp_con
   varianzas <- data.frame(P_con = varp_con, A_con = varA_con)
@@ -240,5 +240,5 @@ EstimacionesPA <- function(A_i, M_i, N, n, M_0 = NULL){
                            LS = c(p_con + 2*sqrt(varp_con), A_con + 2*sqrt(varA_con)))
   rownames(intervalos) <- c("P_con", "A_con")
   list(Estimaciones = data.frame(P_con = p_con, A_con = A_con), Varianzas = varianzas,
-       LEEs = LEEs, Intervalos = intervalos)
+       LEEs = LEEs, Intervalos = intervalos, S2pcon = S2pcon)
 }
