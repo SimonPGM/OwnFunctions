@@ -72,11 +72,11 @@ prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL){
   }
   #Estimacion puntual
   p_con <- 1/n * sum(Pi)
-  A_con <- N*p_con
+  A_con <- M*N*p_con
   
   #Varianzas estimadas
   var_p_con <- (1 - n/N) * (1/n) * (1/(n - 1)) * sum((Pi - p_con)^2)
-  var_A_con <- N^2 * var_p_con
+  var_A_con <- (M*N)^2 * var_p_con
   varianzas <- data.frame(var_p_con = var_p_con,
                           var_A_con = var_A_con)
   
