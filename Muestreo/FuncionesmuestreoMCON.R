@@ -109,15 +109,13 @@ prop_tot_con <- function(M, N, n, Pi = NULL, Ai = NULL){
 }
 
 #Conglomerados tamaños distintos MAS y Razon
-tau_muc_mu <- function(Mi, taui, N, Mo = NULL) {
+tau_muc_mu <- function(Mi, taui, N) {
   
   #Mi tamaño de los conglomerados (seleccionados en la muestra)
   #taui totales de los conglomerados (seleccionados en la muestra)
   #N total de conglomerados
   #Mo es el total de unidades muestrales en la poblacion
-  if (is.null(Mo)) {
-    Mo <- N*mean(Mi)
-  }
+  
   n <- length(Mi)
   tauc.hat <- (N/n)*sum(taui)
   muc.hat <- tauc.hat/N
@@ -177,7 +175,7 @@ sample_size <- function(N, sigma2, D) {
   
   #N es la cantidad de conglomerados
   #sigma2 es la estimacion de la varianza
-  #D es B^2Mbar^2/4
+  #D es B^2Mbar^2/4 aunque depende del parametro
   
   n <- N*sigma2/(N*D + sigma2)
   result <- data.frame(nreal = n, ninteger = ceiling(n))
@@ -187,14 +185,12 @@ sample_size <- function(N, sigma2, D) {
 
 #Conglomerados tamaños distintos PPT, propociones y totales
 
-Estimacionesppt <- function(M_i, t_i, n, N, M_0 = NULL){
+Estimacionesppt <- function(M_i, t_i, n, N, M_0){
   #t_i total por conglomerado
   #N total de conglomerados
   #n número de conglomerados en la muestra
   #M_i Tamaño del iésimo conglomerado
-  if (is.null(M_O)) {
-    M_O <- N*mean(Mi)
-  }
+  
   p_i <- M_i/M_0 
   t_pi <- t_i/p_i 
   mu_i <- t_i/M_i 
