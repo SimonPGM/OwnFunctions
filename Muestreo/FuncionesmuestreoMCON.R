@@ -45,7 +45,8 @@ mu_tau_con <- function(tau_i, M, N, n){
                   Variance = Variances,
                   Standard_Error = EE, 
                   LEE = LEE,
-                  ICs = IC)
+                  ICs = IC,
+                  S2con = S2_con)
   return(overall)
 }
 
