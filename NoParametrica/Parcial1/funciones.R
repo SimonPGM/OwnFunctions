@@ -1,4 +1,4 @@
-binomial.exact.test <- function(x, n, p, kind, alpha = NULL) {
+binomial.exact.test <- function(x, n, p, kind = "two_sided", alpha = NULL) {
   #x es el numero de exitos
   #n es el tamano de muestra
   #p es la probabilidad a contrastar
@@ -14,7 +14,7 @@ binomial.exact.test <- function(x, n, p, kind, alpha = NULL) {
     } else if (kind == "right") {
       for (i in n:0) {
         if (pbinom(i, n, p, lower.tail = F) > alpha) {
-          return(list(upper.limit = i-1, alpha.real = pbinom(i-1, n, p, lower.tail = F)))
+          return(list(upper.limit = i+1, alpha.real = pbinom(i+1, n, p, lower.tail = F)))
         }
       }
     } else {
@@ -27,11 +27,11 @@ binomial.exact.test <- function(x, n, p, kind, alpha = NULL) {
       }
         for (i in n:0) {
           if (pbinom(i, n, p, lower.tail = F) > alpha[2]) {
-            upper <- i-1
+            upper <- i+1 
             break
           }
         }
-      return(list(lower.limit = lower, upper.limit = upper, alpha.real = pbinom(lower, n, p) + pbinom(upper, n, p)))
+      return(list(lower.limit = lower, upper.limit = upper, alpha.real = pbinom(lower, n, p) + pbinom(upper, n, p,lower.tail = F)))
     }
     
   } else {
@@ -46,7 +46,7 @@ binomial.exact.test <- function(x, n, p, kind, alpha = NULL) {
   }
 }
 
-binomial.asintotic.test <- function(x, n, p, kind, alpha= NULL) {
+binomial.asintotic.test <- function(x, n, p, kind = "two_sided", alpha= NULL) {
   #funciona igual que el de arriba, con n > 20
   #alpha en este caso es un solo valor siempre sin importar la naturaleza de la prueba
   if (is.null(alpha)) {
@@ -55,9 +55,9 @@ binomial.asintotic.test <- function(x, n, p, kind, alpha= NULL) {
     if (kind == "left") {
       p.value <- pnorm((numpar + 0.5)/den)
     } else if (kind == "right") {
-      p.value <- pnorm((numpar - 0.5)/den)
+      p.value <- pnorm((numpar - 0.5)/den, lower.tail = F)
     } else {
-      p.value <- 2*min(pnorm((numpar + 0.5)/den), pnorm((numpar - 0.5)/den))
+      p.value <- 2*min(pnorm((numpar + 0.5)/den), pnorm((numpar - 0.5)/den, lower.tail = F))
     }
     return(list(p.value = p.value))
   } else {
