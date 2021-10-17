@@ -72,3 +72,111 @@ binomial.asintotic.test <- function(x, n, p, kind = "two_sided", alpha= NULL) {
     }
   }
 }
+
+
+#TEST CUANTIL
+exact_quantile_test <- function(data, p, q, kind = "two_sided", alpha = NULL){
+  #data: Vector de datos
+  #p: probabilidad p*
+  #q: cuantil x*
+  #kind: Tipo de prueba (two_sided, left, right)
+  #alpha: nivel de significancia de la prueba; si no es dado se calcula el exacto.
+  #Si es prueba de dos colas, alpha es un vector de dos entradas siendo la primera
+  #el area a izquierda y la segunda el area a derecha.
+  #Nota: Para el test de dos colas no se muestra información para calcular el 
+  #valor-p con la distribucion exacta por lo que cuando alpha es nulo solo se
+  #calculan los valores-p en pruebas de cola izquierda o derecha
+  n <- length(data)
+  T1 <- sum(data <= q); T2 <- sum(data < q) #necesario para la RR
+  if(!is.null(alpha)){
+    if(kind == "two_sided"){
+      for(i in 0:n){
+        if(pbinom(i, n, p) > alpha[1]){
+          t1 <- i - 1
+          alpha1 <- pbinom(t1, n, p)
+          break
+        }
+      }
+      for(i in n:0){
+        if(pbinom(i, n, p, lower.tail = F) > alpha[2]){
+          t2 <- i + 1
+          alpha2 <- pbinom(t2, n, p, lower.tail = F)
+          break
+        }
+      }
+      actual_alpha <- alpha1 + alpha2
+      if(T1 <= t1 | T2 > t2){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+      info <- data.frame(T_Statistics = c(T1, T2),
+                         t_Quantiles = c(t1, t2),
+                         alphas = c(alpha1, alpha2))
+      overall <- list(Info = info,
+                      actual_alpha = actual_alpha,
+                      Reject = Reject)
+      return(overall)
+    }
+    if(kind == "left") {
+      for(i in 0:n) {
+        if(pbinom(i, n, p) > alpha){
+          t1 <- i - 1
+          actual_alpha <- pbinom(t1, n, p)
+          break
+        }
+      }
+      if(T1 <= t1){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+      info <- data.frame(T_Statistic = T1,
+                         t_Quantile = t1)
+      overall <- list(Info = info,
+                      actual_alpha <- actual_alpha,
+                      Reject = Reject)
+      return(overall)
+    }
+    if(kind == "right"){
+      for(i in n:0){
+        if(pbinom(i, n, p, lower.tail = F)){
+          t2 <- i + 1
+          actual_alpha <- pbinom(t2, n, p, lower.tail = F)
+          break
+        }
+      }
+      if(T2 > t2){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+      info <- data.frame(T_Statistic = T2, 
+                         t_Quantile = t2)
+      overall <- list(Info = info,
+                      actual_alpha = actual_alpha,
+                      Reject = Reject)
+      return(overall)
+    }
+  }
+  else{
+    if(kind == "left"){
+      pvalue <- pbinom(T1, n, p)
+      overall <- list(pvalue = pvalue)
+      return(overall)
+    }
+    else if(kind == "right"){
+      pvalue <- pbinom(T2 - 1, n, p, lower.tail = F)
+      overall <- list(pvalue = pvalue)
+      return(overall)
+    }
+    else{
+      return(print("Not suported P-Value for a two sided test"))
+    }
+  }
+}
+
+
