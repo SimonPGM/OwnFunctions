@@ -179,4 +179,69 @@ exact_quantile_test <- function(data, p, q, kind = "two_sided", alpha = NULL){
   }
 }
 
-
+asintotic_quantile_test <- function(data, p, q, kind = "two_sided", alpha = NULL){
+  #data: Vector de datos
+  #p: probabilidad p*
+  #q: cuantil x*
+  #kind: Tipo de prueba de las colas (two-sided, left, right)
+  #alpha: Nivel de significancia de la prueba, si es nulo se usa region de rechazo
+  n <- length(data)
+  T1 <- sum(data <= q); T2 <- sum(data < q)
+  if(!is.null(alpha)){
+    if(kind == "two_sided"){
+      t1 <- n*p + qnorm(alpha/2) * sqrt(n*p*(1 - p))
+      t2 <- n*p - qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
+      if(T1 <= t1 | T2 > t2){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+      info <- data.frame(T_Statistics = c(T1, T2),
+                         t_Quantiles = c(t1, t2))
+      overall <- list(Info = info, 
+                      Reject = Reject)
+      return(overall)
+    }
+    if(kind == "left"){
+      t1 <- n*p + qnorm(alpha) * sqrt(n*p*(1 - p))
+      if(T1 <= t1){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+      info <- data.frame(T1_Statistic = T1,
+                         t1_Quantile = t1)
+      overall <- list(Info = info, 
+                      Reject = Reject)
+      return(overall)
+    }
+    if(kind == "right"){
+      t2 <- n*p - qnorm(alpha) * sqrt(n*p*(1 - p))
+      if(T2 > t2){
+        Reject <- T
+      }
+      else{
+        Reject <- F
+      }
+    }
+  }
+  else{
+    den <- sqrt(n*p(1 -p))
+    proof_stat1 <- (T1 - n*p + 0.5)/den
+    proof_stat2 <- (T2 - n*p - 0.5)/den
+    if(kind == "two_sided"){
+      P1 <- pnorm(proof_stat1)
+      P2 <- pnorm(proof_stat2, lower.tail = F)
+      pvalue <- 2 * min(P1, P2)
+    }
+    else if(kind == "left"){
+      pvalue <- pnorm(proof_stat1)
+    }
+    else{
+      pvalue <- pnorm(proof_stat2, lower.tail = F)
+    }
+    return(list(pvalue = pvalue))
+  }
+}
