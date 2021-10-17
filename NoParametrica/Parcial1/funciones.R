@@ -227,4 +227,21 @@ asintotic_quantile_test <- function(data, p, q, kind = "two_sided", alpha = NULL
       }
     }
   }
+  else{
+    den <- sqrt(n*p(1 -p))
+    proof_stat1 <- (T1 - n*p + 0.5)/den
+    proof_stat2 <- (T2 - n*p - 0.5)/den
+    if(kind == "two_sided"){
+      P1 <- pnorm(proof_stat1)
+      P2 <- pnorm(proof_stat2, lower.tail = F)
+      pvalue <- 2 * min(P1, P2)
+    }
+    else if(kind == "left"){
+      pvalue <- pnorm(proof_stat1)
+    }
+    else{
+      pvalue <- pnorm(proof_stat2, lower.tail = F)
+    }
+    return(list(pvalue = pvalue))
+  }
 }
