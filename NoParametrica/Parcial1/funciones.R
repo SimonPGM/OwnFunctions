@@ -308,3 +308,188 @@ asintotic_quantile_test <- function(p, q, data = NULL, n = NULL, T1 = NULL, T2 =
     }
   }
 }
+
+#TEST DEL SIGNO
+sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_sided"){
+  #data: bd con las observaciones de las dos v.a (suponiendo Xi es la columna 1
+  # y Yi es la columna 2)
+  #Notas: - Como p = 0.5, la distribucion es simetrica
+  #- De la data se puede deducir el n y el estadistico de prueba, si data es nulo
+  #se deben especificar dichos argumentos
+  #- No se da información sobre valores-p usando la distribucion exacta por lo
+  #que se asume que la muestra es lo suficientemente grande cuando se usan 
+  #valores-p (alpha nulo)
+  if(!is.null(data)){
+    n <- dim(data)[1]
+    T_stat <- sum(data[, 1] < data[, 2])
+    if(n <= 20){
+      #En este caso se usa la distribucion exacta
+      if(kind == "two_sided"){
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha/2){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat <= t | T_stat >= n - t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- 2 * min(pbinom(T_stat, n, 0.5, lower.tail = F),
+                          pbinom(T_stat, n, 0.5))
+        actual_alpha <- 2 * pbinom(t, n, 0.5)
+      }
+      else if(kind == "right"){
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat >= n - t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- pbinom(T_stat, n, 0.5, lower.tail = F)
+        actual_alpha <- pbinom(t, n, 0.5)
+      }
+      else {
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat <= t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- pbinom(T_stat, n, 0.5)
+        actual_alpha <- pbinom(t, n, 0.5)
+      }
+      overall <- list(T_statistic = T_stat,
+                      t_quantile = t,
+                      Reject = Reject,
+                      pvalue = pvalue)
+      return(overall)
+    }
+    #n > 20
+    else{
+      t <- 0.5 * (n + qnorm(alpha/2) * sqrt(n))
+      if(kind == "two_sided"){
+        num1 <- T_stat - n*p + 0.5
+        num2 <- T_stat - n*p - 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- 2 * min(pnorm(num1/den),
+                          pnorm(num2/den, lower.tail = F))
+      }
+      else if(kind == "right"){
+        num2 <- T_stat - n*p - 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- pnorm(num2/den, lower.tail = F)
+      }
+      else {
+        num1 <- T_stat - n*p + 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- pnorm(num2/den)
+      }
+      overall <- list(T_statistic = T_stat,
+                      t_quantile = t,
+                      pvalue = pvalue)
+      return(overall)
+    }
+  }
+  #data nula
+  else{
+    if(n <= 20){
+      #En este caso se usa la distribucion exacta
+      if(kind == "two_sided"){
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha/2){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat <= t | T_stat >= n - t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- 2 * min(pbinom(T_stat, n, 0.5, lower.tail = F),
+                          pbinom(T_stat, n, 0.5))
+        actual_alpha <- 2 * pbinom(t, n, 0.5)
+      }
+      else if(kind == "right"){
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat >= n - t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- pbinom(T_stat, n, 0.5, lower.tail = F)
+        actual_alpha <- pbinom(t, n, 0.5)
+      }
+      else {
+        for(i in 0:n){
+          if(pbinom(i, n, 0.5) > alpha){
+            t <- i - 1
+            break
+          }
+        }
+        if(T_stat <= t){
+          Reject <- T
+        }
+        else{
+          Reject <- F
+        }
+        pvalue <- pbinom(T_stat, n, 0.5)
+        actual_alpha <- pbinom(t, n, 0.5)
+      }
+      overall <- list(T_statistic = T_stat,
+                      t_quantile = t,
+                      Reject = Reject,
+                      pvalue = pvalue)
+      return(overall)
+    }
+    #n > 20
+    else{
+      t <- 0.5 * (n + qnorm(alpha/2) * sqrt(n))
+      if(kind == "two_sided"){
+        num1 <- T_stat - n*p + 0.5
+        num2 <- T_stat - n*p - 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- 2 * min(pnorm(num1/den),
+                          pnorm(num2/den, lower.tail = F))
+      }
+      else if(kind == "right"){
+        num2 <- T_stat - n*p - 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- pnorm(num2/den, lower.tail = F)
+      }
+      else {
+        num1 <- T_stat - n*p + 0.5
+        den <- sqrt(n*p*(1 - p))
+        pvalue <- pnorm(num2/den)
+      }
+      overall <- list(T_statistic = T_stat,
+                      t_quantile = t,
+                      pvalue = pvalue)
+      return(overall)
+    }
+  }
+}
+
+
