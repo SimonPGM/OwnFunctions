@@ -44,6 +44,11 @@ estimate_random_efects_anova <- function(anova_table, ni, a, response, gamma = 0
   sigma2_alpha <- (MSA - MSE)/c
   mu_hat <- (1/N) * sum(response) 
   
+  #Razon de componentes de varianzas sigma2_a/sigma2
+  vars_rate <- (MSA - MSE)/(c * MSE) 
+  #Proporción de var total debida al factor sigma2_a/(sigma2a + sigma2)
+  prop_var_total <- (MSA - MSE)/((c - 1) * MSE + MSA)
+  
   #Intervalo para sigma^2
   LI_sigma2 <- SSE/qchisq(gamma/2, N - a, lower.tail = F)
   LS_sigma2 <- SSE/qchisq(gamma/2, N - a)
@@ -68,14 +73,31 @@ estimate_random_efects_anova <- function(anova_table, ni, a, response, gamma = 0
   LS_mu <- mu_hat + qt(gamma/2, nu_star, lower.tail = F) * sqrt(S2y)
   IC_mu <- c(LI_mu, LS_mu)
   
+  #Intervalo para sigma2_a/sigma2
+  Fo <- anova_table$F.value[1]
+  L <- ((Fo/qf(gamma/2, a - 1, N - a, lower.tail = F)) - 1)
+  U <- ((Fo/qf(gamma/2, a - 1, N - a)) - 1)
+  LI_vars_rate <- (1/c) * L
+  LS_vars_rate <- (1/c) * U
+  IC_vars_rate <- c(LI_vars_rate, LS_vars_rate)
+  
+  #Intervalo para sigma2_a/(sigma2_a + sigma2)
+  LI_prop_var_total <- (L/(1 + L))
+  LS_prop_var_total <- (U/(1 + U))
+  IC_prop_var_total <- c(LI_prop_var_total, LS_prop_var_total)
+  
   #Resumen
   estimations <- data.frame(Sigma_Squared = MSE, 
                             Sigma_Subalpha_Squared = sigma2_alpha,
-                            Mu = mu_hat)
+                            Mu = mu_hat, 
+                            Vars_Rate = vars_rate,
+                            Prop_Var_Total_Factor = prop_var_total)
   
   ICs <- data.frame(Sigma_Squared = IC_sigma2,
                     Sigma_Subalpha_Squared = IC_sigma2_alpha,
-                    Mu = IC_mu)
+                    Mu = IC_mu,
+                    Var_Rate = IC_vars_rate,
+                    Prop_Var_Total_Factor = IC_prop_var_total)
   rownames(ICs) <- c("Lower", "Upper")
   overall <- list(Estimations = estimations, 
                   Confidence_Intervals = t(ICs))
