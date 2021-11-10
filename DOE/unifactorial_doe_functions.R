@@ -74,7 +74,7 @@ estimate_random_efects_anova <- function(anova_table, ni, a, response, gamma = 0
   IC_mu <- c(LI_mu, LS_mu)
   
   #Intervalo para sigma2_a/sigma2
-  Fo <- anova_table$F.value[1]
+  Fo <- as.numeric(anova_table$F.value[1])
   L <- (1/c)*((Fo/qf(gamma/2, a - 1, N - a, lower.tail = F)) - 1)
   U <- (1/c)*((Fo/qf(gamma/2, a - 1, N - a)) - 1)
   LI_vars_rate <- L
