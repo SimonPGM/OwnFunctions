@@ -129,3 +129,20 @@ random.effects.residuals <- function(modelo, datos){
              Pvalue = c(sh.residuals$p.value, sh.effects$p.value))
 }
 
+#POTENCIA EN EFECTOS ALEATORIOS (CODIGOS DE NELFY)
+#CASO 1: Test de hipotesis fundamental DCA aleatorios
+potANOVADCAaleat <- function(n, a, Delta, gamma = 0.05){
+  fcrit <- qf(gamma, df1 = (a - 1), df2 = (a*(n - 1)), lower.tail = F)
+  div <- 1 + n*Delta
+  p <- pf((fcrit/div), df1=(a - 1), df2=(a*(n - 1)), lower.tail = F)
+  p
+} 
+
+#CASO 2: sigma2_a <= eta*sigma2
+potANOVADCAaleat2=function(n, a, Delta, eta, gamma = 0.05){
+  fcrit <- qf(gamma, df1 = (a - 1), df2 = (a*(n - 1)), lower.tail = F)
+  div <- 1 + n*Delta
+  num <- 1 + n*eta
+  p <- pf((fcrit*num/div), df1=(a - 1), df2 = (a*(n - 1)), lower.tail=F)
+  p
+}
