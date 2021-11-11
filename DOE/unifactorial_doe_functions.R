@@ -89,7 +89,8 @@ estimate_random_efects_anova <- function(anova_table, ni, a, response, gamma = 0
   #Resumen
   estimations <- data.frame(Sigma_Squared = MSE, 
                             Sigma_Subalpha_Squared = sigma2_alpha,
-                            Mu = mu_hat, 
+                            Mu = mu_hat,
+                            Std_Mu = sqrt(S2y),
                             Vars_Rate = vars_rate,
                             Prop_Var_Total_Factor = prop_var_total)
   
