@@ -135,7 +135,7 @@ exact_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
         info <- data.frame(T_Statistic = T1,
                            t_Quantile = t1)
         overall <- list(Info = info,
-                        actual_alpha <- actual_alpha,
+                        actual_alpha = actual_alpha,
                         Reject = Reject)
         return(overall)
       }
@@ -230,7 +230,7 @@ exact_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
         info <- data.frame(T_Statistic = T1,
                            t_Quantile = t1)
         overall <- list(Info = info,
-                        actual_alpha <- actual_alpha,
+                        actual_alpha = actual_alpha,
                         Reject = Reject)
         return(overall)
       }
