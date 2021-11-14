@@ -407,6 +407,103 @@ asintotic_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
   }
 }
 
+quantile_exact_confint <- function(p, alpha, n = NULL, data = NULL){
+  #n: Tamaño de muestra. Se debe pasar si data es nulo
+  #p: probabilidad p*
+  #Nivel de significancia deseado
+  #data: vector con los datos, si es nula se retorna las posiciones en las cuales
+  #se cumple lo deseado (EJ: 7 y 14 significan que los límites son X[7] y X[14])
+  if(is.null(data)){
+    #Solo se retornan los indices y el nivel de confianza real
+    #Se busca el y inferior, r y alpha1 respectivamente
+    for(y in 0:n){
+      if((pbinom(y, n, p) < alpha/2) & (pbinom(y + 1, n, p) > alpha/2)){
+        d1 <- abs((pbinom(y, n, p) - alpha/2))
+        d2 <- abs(pbinom(y + 1, n, p) - alpha/2)
+        if(d1 < d2){
+          y_lower <- y
+        }
+        else{
+          y_lower <- y + 1
+        }
+        r <- y_lower + 1
+        alpha1 <- pbinom(y_lower, n, p)
+        break
+      }
+    }
+    #Se busca el y superior, r y alpha2 respectivamente
+    for(y in 0:n){
+      if((pbinom(y, n, p) < 1 - alpha/2) & (pbinom(y + 1, n, p) > 1 - alpha/2)){
+        d1 <- abs((pbinom(y, 20, 0.5) - (1 - alpha/2)))
+        d2 <- abs(pbinom(y + 1, 20, 0.5) - (1 - alpha/2))
+        if(d1 < d2){
+          y_upper <- y
+        }
+        else{
+          y_upper <- y + 1
+        }
+        s <- y_upper + 1
+        alpha2 <- 1 - pbinom(y_upper, n, p)
+        break
+      }
+    }
+    conf_real <- 1 - alpha1 - alpha2
+    #Resumen
+    overall <- list(Confidence = cbind(Conf_level = conf_real, 
+                                       alpha1 = alpha1, alpha2 = alpha2),
+                    Indexes = cbind(Lower = r, Upper = s),
+                    Y = cbind(Lower = y_lower, Upper = y_upper))
+    return(overall)
+  }#Cierra la condición de data = NULL
+  
+  #data  no nula
+  else{
+    n <- length(data)
+    data_sort <- sort(data)
+    for(y in 0:n){
+      if((pbinom(y, n, p) < alpha/2) & (pbinom(y + 1, n, p) > alpha/2)){
+        d1 <- abs((pbinom(y, n, p) - alpha/2))
+        d2 <- abs(pbinom(y + 1, n, p) - alpha/2)
+        if(d1 < d2){
+          y_lower <- y
+        }
+        else{
+          y_lower <- y + 1
+        }
+        r <- y_lower + 1
+        alpha1 <- pbinom(y_lower, n, p)
+        break
+      }
+    }
+    #Se busca el y superior, r y alpha2 respectivamente
+    for(y in 0:n){
+      if((pbinom(y, n, p) < 1 - alpha/2) & (pbinom(y + 1, n, p) > 1 - alpha/2)){
+        d1 <- abs((pbinom(y, 20, 0.5) - (1 - alpha/2)))
+        d2 <- abs(pbinom(y + 1, 20, 0.5) - (1 - alpha/2))
+        if(d1 < d2){
+          y_upper <- y
+        }
+        else{
+          y_upper <- y + 1
+        }
+        s <- y_upper + 1
+        alpha2 <- 1 - pbinom(y_upper, n, p)
+        break
+      }
+    }
+    conf_real <- 1 - alpha1 - alpha2
+    #Resumen
+    overall <- list(Confidence = cbind(Conf_level = conf_real, 
+                                       alpha1 = alpha1, alpha2 = alpha2),
+                    Indexes = cbind(Lower = r, Upper = s),
+                    Confidence_Interval = cbind(Lower = data_sort[r], Upper = data_sort[s]),
+                    Y = cbind(Lower = y_lower, Upper = y_upper))
+    return(overall)
+  }
+}
+
+
+
 #TEST DEL SIGNO
 sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_sided"){
   #data: bd con las observaciones de las dos v.a (suponiendo Xi es la columna 1
