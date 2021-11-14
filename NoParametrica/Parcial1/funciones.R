@@ -141,7 +141,7 @@ exact_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
       }
       if(kind == "right"){
         for(i in n:0){
-          if(pbinom(i, n, p, lower.tail = F)){
+          if(pbinom(i, n, p, lower.tail = F) > alpha){
             t2 <- i + 1
             actual_alpha <- pbinom(t2, n, p, lower.tail = F)
             break
@@ -236,7 +236,7 @@ exact_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
       }
       if(kind == "right"){
         for(i in n:0){
-          if(pbinom(i, n, p, lower.tail = F)){
+          if(pbinom(i, n, p, lower.tail = F) > alpha){
             t2 <- i + 1
             actual_alpha <- pbinom(t2, n, p, lower.tail = F)
             break
