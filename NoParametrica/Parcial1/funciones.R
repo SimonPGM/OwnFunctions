@@ -193,7 +193,7 @@ asintotic_quantile_test <- function(p, q, data = NULL, n = NULL, T1 = NULL, T2 =
     if(!is.null(alpha)){
       if(kind == "two_sided"){
         t1 <- n*p + qnorm(alpha/2) * sqrt(n*p*(1 - p))
-        t2 <- n*p - qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
+        t2 <- n*p + qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
         if(T1 <= t1 | T2 > t2){
           Reject <- T
         }
@@ -221,7 +221,7 @@ asintotic_quantile_test <- function(p, q, data = NULL, n = NULL, T1 = NULL, T2 =
         return(overall)
       }
       if(kind == "right"){
-        t2 <- n*p - qnorm(alpha) * sqrt(n*p*(1 - p))
+        t2 <- n*p + qnorm(alpha) * sqrt(n*p*(1 - p))
         if(T2 > t2){
           Reject <- T
         }
@@ -252,7 +252,7 @@ asintotic_quantile_test <- function(p, q, data = NULL, n = NULL, T1 = NULL, T2 =
     if(!is.null(alpha)){
       if(kind == "two_sided"){
         t1 <- n*p + qnorm(alpha/2) * sqrt(n*p*(1 - p))
-        t2 <- n*p - qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
+        t2 <- n*p + qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
         if(T1 <= t1 | T2 > t2){
           Reject <- T
         }
@@ -280,7 +280,7 @@ asintotic_quantile_test <- function(p, q, data = NULL, n = NULL, T1 = NULL, T2 =
         return(overall)
       }
       if(kind == "right"){
-        t2 <- n*p - qnorm(alpha) * sqrt(n*p*(1 - p))
+        t2 <- n*p + qnorm(alpha) * sqrt(n*p*(1 - p))
         if(T2 > t2){
           Reject <- T
         }
