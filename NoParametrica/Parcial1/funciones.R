@@ -502,6 +502,29 @@ quantile_exact_confint <- function(p, alpha, n = NULL, data = NULL){
   }
 }
 
+quantile_asintotic_confint <- function(p, alpha, n = NULL, data = NULL){
+  #n: Tamaño de muestra. Se debe pasar si data es nulo
+  #p: probabilidad p*
+  #Nivel de significancia deseado
+  #data: vector con los datos, si es nula se retorna las posiciones en las cuales
+  #se cumple lo deseado (EJ: 7 y 14 significan que los límites son X[7] y X[14])
+  if(is.null(data)){
+    r <- n*p - qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p)) 
+    s <- n*p + qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
+    Indexes <- cbind(Lower = ceiling(r), Upper = ceiling(s))
+    list(Indexes = Indexes)
+  }
+  else{
+    n <- length(data)
+    r <- n*p - qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p)) 
+    s <- n*p + qnorm(alpha/2, lower.tail = F) * sqrt(n*p*(1 - p))
+    Indexes <- cbind(Lower = ceiling(r), Upper = ceiling(s))
+    overall <- list(Indexes = Indexes,
+                    Confidence_Interval = cbind(Lower = data[ceiling(r)],
+                                                Upper = data[ceiling(s)]))
+    return(overall)
+  }
+}
 
 
 #TEST DEL SIGNO
