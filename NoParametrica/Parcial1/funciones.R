@@ -1,3 +1,5 @@
+#Simon
+
 binomial.exact.test <- function(x, n, p, kind = "two_sided", alpha = NULL) {
   #x es el numero de exitos
   #n es el tamano de muestra
@@ -73,6 +75,8 @@ binomial.asintotic.test <- function(x, n, p, kind = "two_sided", alpha= NULL) {
   }
 }
 
+
+#JUANJO
 
 #TEST CUANTIL
 exact_quantile_test <- function(p, q, kind = "two_sided", data = NULL, 
