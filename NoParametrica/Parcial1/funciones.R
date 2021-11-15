@@ -333,7 +333,7 @@ asintotic_quantile_test <- function(p, q, kind = "two_sided", data = NULL,
       }
     }
     else{
-      den <- sqrt(n*p(1 -p))
+      den <- sqrt(n*p*(1 -p))
       proof_stat1 <- (T1 - n*p + 0.5)/den
       proof_stat2 <- (T2 - n*p - 0.5)/den
       if(kind == "two_sided"){
@@ -576,7 +576,7 @@ sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_s
         else{
           Reject <- F
         }
-        pvalue <- pbinom(T_stat, n, 0.5, lower.tail = F)
+        pvalue <- pbinom(T_stat - 1, n, 0.5, lower.tail = F)
         actual_alpha <- pbinom(t, n, 0.5)
       }
       else {
@@ -661,7 +661,7 @@ sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_s
         else{
           Reject <- F
         }
-        pvalue <- pbinom(T_stat, n, 0.5, lower.tail = F)
+        pvalue <- pbinom(T_stat - 1, n, 0.5, lower.tail = F)
         actual_alpha <- pbinom(t, n, 0.5)
       }
       else {
