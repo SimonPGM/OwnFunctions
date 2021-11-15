@@ -604,21 +604,21 @@ sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_s
     #n > 20
     else{
       t <- 0.5 * (n + qnorm(alpha/2) * sqrt(n))
+      num1 <- T_stat - n*0.5 + 0.5
+      num2 <- T_stat - n*0.5 - 0.5
       if(kind == "two_sided"){
-        num1 <- T_stat - n*p + 0.5
-        num2 <- T_stat - n*p - 0.5
-        den <- sqrt(n*p*(1 - p))
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- 2 * min(pnorm(num1/den),
                           pnorm(num2/den, lower.tail = F))
       }
       else if(kind == "right"){
-        num2 <- T_stat - n*p - 0.5
-        den <- sqrt(n*p*(1 - p))
+        num2 <- T_stat - n*0.5 - 0.5
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- pnorm(num2/den, lower.tail = F)
       }
       else {
-        num1 <- T_stat - n*p + 0.5
-        den <- sqrt(n*p*(1 - p))
+        num1 <- T_stat - n*0.5 + 0.5
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- pnorm(num2/den)
       }
       overall <- list(T_statistic = T_stat,
@@ -689,21 +689,21 @@ sign_test <- function(alpha, n = NULL, data = NULL, T_stat = NULL, kind = "two_s
     #n > 20
     else{
       t <- 0.5 * (n + qnorm(alpha/2) * sqrt(n))
+      num1 <- T_stat - n*0.5 + 0.5
+      num2 <- T_stat - n*0.5 - 0.5
       if(kind == "two_sided"){
-        num1 <- T_stat - n*p + 0.5
-        num2 <- T_stat - n*p - 0.5
-        den <- sqrt(n*p*(1 - p))
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- 2 * min(pnorm(num1/den),
                           pnorm(num2/den, lower.tail = F))
       }
       else if(kind == "right"){
-        num2 <- T_stat - n*p - 0.5
-        den <- sqrt(n*p*(1 - p))
+        num2 <- T_stat - n*0.5 - 0.5
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- pnorm(num2/den, lower.tail = F)
       }
       else {
-        num1 <- T_stat - n*p + 0.5
-        den <- sqrt(n*p*(1 - p))
+        num1 <- T_stat - n*0.5 + 0.5
+        den <- sqrt(n*0.5*(1 - 0.5))
         pvalue <- pnorm(num2/den)
       }
       overall <- list(T_statistic = T_stat,
