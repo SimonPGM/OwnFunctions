@@ -70,7 +70,7 @@ mean_diffs_confint <- function(X, Y, W){
   n <- length(X)
   m <- length(Y)
   r <- n*m
-  k <- W - n*(n+1)/2
+  k <- round(W - n*(n+1)/2)
   aux <- rep(X, each = length(Y))
   all_diffs <- aux - Y
   all_diffs_sort <- sort(all_diffs)
