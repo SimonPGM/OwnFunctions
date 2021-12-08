@@ -1,5 +1,66 @@
 ################################################################################
 #JUANJO
+#R tiene implementado el test con la función pero a veces difiere con las diapos
+mann_whitney <- function(X, Y, stat = "T1", alternative = "two_sided"){
+  #X: Observaciones de la poblacion 1
+  #Y: Observaciones de la población 2
+  #NOTA: Si se usa el estadístico T, W NO PUEDE SER NULO
+  n <- length(X)
+  m <- length(Y)
+  N <- n + m
+  merge_obs <- c(X, Y)
+  Ri <- rank(merge_obs)
+  Rx <- Ri[1:n]
+  Ry <- Ri[(n + 1):N]
+  
+  Ts <- sum(Rx)
+  #Calculos dependen de la selección del estadístico de prueba
+  if(stat == "T"){
+    Tp <- n*(N + 1) - Ts
+    if(alternative == "two_sided"){
+      minimum <- min(Ts, Tp)
+      num <- minimum - n*(N + 1)/2 + 1/2
+      den <- sqrt(n*m*(N + 1)/12)
+      proof_stat <- num/den
+      pvalue <- 2*pnorm(proof_stat)
+    }
+    if(alternative == "less"){
+      num <- Ts - n*(N + 1)/2 + 1/2
+      den <- sqrt(n*m*(N + 1)/12)
+      proof_stat <- num/den
+      pvalue <- pnorm(proof_stat)
+    }
+    if(stat == "greater"){
+      num <- Tp - n*(N + 1)/2 + 1/2
+      den <- sqrt(n*m*(N + 1)/12)
+      proof_stat <- num/den
+      pvalue <- pnorm(proof_stat)
+    }
+    return(pvalue)
+  }
+  #si se va a usar T1
+  else{
+    num_NC <- Ts - n*(N + 1)/2
+    num_C <- Ts - n*(N + 1)/2 - 1/2
+    den <- sqrt(n*m/(N*(N - 1)) * sum(Ri^2) - n*m*(N + 1)^2/(4*(N - 1)))
+    T1_NC <- num_NC/den
+    T1_C <- num_C/den
+    if(alternative == "two_sided"){
+      pvalue_NC <- 2*min(pnorm(T1_NC), pnorm(T1_NC, lower.tail = F))
+      pvalue_C <- 2*min(pnorm(T1_C), pnorm(T1_NC, lower.tail = F))
+    }
+    if(alternative == "less"){
+      pvalue_NC <- pnorm(T1_NC)
+      pvalue_C <- pnorm(T1_C)
+    }
+    if(alternative == "greater"){
+      pvalue_NC <- pnorm(T1_NC, lower.tail = F)
+      pvalue_C <- pnorm(T1_C, lower.tail = F)
+    }
+    return(list(Without_Correct_Factor = pvalue_NC,
+                With_Correct_Factor = pvalue_C))
+  }
+}
 
 #INTERVALO DE CONFIANZA PARA DIFERENCIA DE MEDIAS
 mean_diffs_confint <- function(X, Y, W){
