@@ -135,9 +135,62 @@ comp_multiple_vars <- function(populations, alpha = 0.05){
   pvalue <- pchisq(T2, length(populations) - 1, lower.tail = F)
   
   #Resumen
-  overall <- list(Statistic = T2,
+  overall <- list(N = N, Statistic = T2, D_Squared = D2, S_bar = S_bar, 
+                  Critical_value = qchisq(alpha, length(populations) - 1, 
+                                          lower.tail = F),
                   Ranks_Sum_Squares = Sj,
                   PValue = pvalue,
                   Reject = Reject)
   return(overall)
 }
+
+#SIMON
+multcomp.var <- function(population, alpha = 0.05) {
+  #populations: lista donde cada entrada es un vector con las observaciones
+  #de cada población
+  #alpha: Nivel de significancia para la región de rechaza (Se fija en 0.05)
+  population <- lapply(population, function(x) abs(scale(x, scale = F)))
+  nj <- sapply(population, length) #extrayendo los nj
+  k <- length(population) #numero de poblaciones
+  N <- sum(nj) #calculando n
+  temp <- c() #aca se almacenan todos los datos
+  for (i in 1:k) {
+    temp <- append(temp, population[[i]])
+  }
+  rankstemp <- rank(temp) #rangos de todos los datos
+  ranks <- list()
+  start <- 1; end <- nj[1] #primera pareja start, end
+  for (i in 1:k) {
+    ranks[[i]] <- rankstemp[start:end] #estos pertenecen a la poblacion i
+    if (i < k) {
+      start <- end +1; end <- end + nj[i+1] #se actualizan al final, solo si i < k
+    }
+  }
+  Sjtemp <- lapply(ranks, function(x) x^2) #se elevan los rangos al cuadrado por muestra
+  Sbar <- sum(Sj <- sapply(Sjtemp, sum))/N #se calcula s barra
+  D.sq <- (sum(rankstemp^4) - N*Sbar^2)/(N-1) #se calcula d barra cuadrado
+  T.2 <- (sum(Sj^2/nj) - N*Sbar^2)/D.sq #se calcula el estadistico de prueba
+  result <- list(N = N, Sbar = Sbar, Dsq = D.sq, T2 = T.2,
+                 p.value = pchisq(T.2, k-1, lower.tail = F),
+                 reject = pchisq(T.2, k-1, lower.tail = F) < alpha,
+                 critical.value = qchisq(alpha, k - 1, lower.tail = F))
+  if (result$reject) {
+    idx <- combn(1:k, 2)
+    reps <- ncol(idx)
+    aux <- rep(0, reps)
+    comps <- data.frame(Population = aux, diffs = aux, direction = as.character(aux), critic.value = aux)
+    for (i in 1:reps) {
+      idxtemp <- idx[,i]
+      first <- idxtemp[1]
+      second <- idxtemp[2]
+      comps[i, 1] <- paste(first, second, sep = "-")
+      comps[i, 2] <- abs(Sj[first]/nj[first] - Sj[second]/nj[second])
+      comps[i, 4] <- qt(alpha/2, N - ncol(idx), lower.tail = F)*sqrt(D.sq*(N-1-T.2)/(N-k))*sqrt(1/nj[first]+1/nj[second])
+      comps[i, 3] <- ifelse(comps[i,2] > comps[i,4], ">", "<")
+    }
+    return(list(result, comps = comps))
+  }
+  return(result)
+}
+
+
