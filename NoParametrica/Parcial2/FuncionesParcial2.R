@@ -1,6 +1,22 @@
 ################################################################################
 #JUANJO
 
+#INTERVALO DE CONFIANZA PARA DIFERENCIA DE MEDIAS
+mean_diffs_confint <- function(X, Y, W){
+  #X: Observaciones de la población 1
+  #Y: Observaciones de la población 2
+  #W: Es el valor crítico de la tabla A7 de Conover o usando aproximación normal
+  n <- length(X)
+  m <- length(Y)
+  r <- n*m
+  k <- W - n*(n+1)/2
+  aux <- rep(X, each = length(Y))
+  all_diffs <- aux - Y
+  all_diffs_sort <- sort(all_diffs)
+  IC <- all_diffs_sort[c(k, r - k + 1)]
+  IC
+}
+
 #TEST PARA COMPARAR VARIANZAS DE VARIAS POBLACIONES
 comp_multiple_vars <- function(populations, alpha = 0.05){
   #populations: lista donde cada entrada es un vector con las observaciones
