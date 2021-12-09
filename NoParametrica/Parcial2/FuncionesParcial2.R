@@ -193,4 +193,33 @@ multcomp.var <- function(population, alpha = 0.05) {
   return(result)
 }
 
-
+#Numero de concordantes y discordantes
+conc.dis <- function(x, y) {
+  library(tidyverse)
+  dfaux <- data.frame(x, y)
+  dfaux <- dfaux %>%
+    arrange(x, y)
+  x <- dfaux$x
+  y <- dfaux$y
+  rm(dfaux)
+  n <- length(x)
+  df <- data.frame(pair = rep("", n-1), Conc = rep(0, n-1), Disc = rep(0, n-1))
+  for (i in 1:(n-1)) {
+    for (j in (i+1):n) {
+      if (x[i] != x[j]) {
+        if((y[i] - y[j])/(x[i] - x[j]) > 0) {
+          df[i, 2] <- df[i, 2] + 1
+        } else if ((y[i] - y[j])/(x[i] - x[j]) < 0) {
+          df[i, 3] <- df[i, 3] + 1
+        } else {
+          df[i, 2] <- df[i, 2] + 0.5
+          df[i, 3] <- df[i, 3] + 0.5
+        }
+      } else {
+        next
+      }
+    }
+    df[i, 1] <- paste("(", x[i], ", ", y[i], ")", sep = "")
+  }
+  return(list(df = df, Nc = sum(df[,2]), Nd = sum(df[,3])))
+}
